@@ -3,6 +3,13 @@
 All notable changes to this project will be documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.0] - 2026-04-22
+
+### Changed
+- `run-all.sh` now limits concurrent migrations via `MAX_CONCURRENT=2`
+- Waits 30s and rechecks before starting the next job when limit is reached
+- Added 10s sleep between job starts to reduce connection spikes on IMAP servers
+
 ## [1.2.0] - 2026-04-22
 
 ### Fixed
