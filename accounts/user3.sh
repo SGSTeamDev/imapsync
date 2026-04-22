@@ -48,7 +48,6 @@ start_job() {
       --skipsize \
       --timeout1 60 --timeout2 60 \
       --reconnectretry1 5 --reconnectretry2 5 \
-      --maxbytespersecond 400000 \
       --errorsmax 1000 \
       2>&1 | tee \"$LOG\"
 
