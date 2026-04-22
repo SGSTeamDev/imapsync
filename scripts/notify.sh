@@ -29,10 +29,10 @@ curl --show-error --fail \
   --connect-timeout 10 --max-time 30 \
   --url "$SMTP_URL" \
   $SSL_FLAG \
-  --mail-from "$SMTP_USER" \
+  --mail-from "${SMTP_FROM:-$SMTP_USER}" \
   --mail-rcpt "$NOTIFY_TO" \
   --user "${SMTP_USER}:${SMTP_PASS}" \
   -T <(printf "From: imapsync <%s>\r\nTo: %s\r\nSubject: %s\r\nDate: %s\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n%s\r\n" \
-    "$SMTP_USER" "$NOTIFY_TO" "$SUBJECT" "$DATE" "$BODY") \
+    "${SMTP_FROM:-$SMTP_USER}" "$NOTIFY_TO" "$SUBJECT" "$DATE" "$BODY") \
   && echo "[notify] Email sent: $SUBJECT" \
   || echo "[notify] Failed to send email."
