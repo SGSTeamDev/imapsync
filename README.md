@@ -15,8 +15,31 @@ Bash scripts for migrating multiple IMAP email accounts using [imapsync](https:/
 - Ubuntu VPS (or any Linux with bash)
 - `imapsync`, `tmux`, `curl`
 
+**Install tmux and curl:**
 ```bash
-apt update && apt install -y imapsync tmux curl
+apt update && apt install -y tmux curl
+```
+
+**Install imapsync** (not in default apt repos — install via official script):
+```bash
+# 1. Install Perl dependencies
+apt install -y \
+  libauthen-ntlm-perl libcgi-pm-perl libcrypt-openssl-rsa-perl \
+  libdata-uniqid-perl libencode-imaputf7-perl libfile-copy-recursive-perl \
+  libfile-tail-perl libio-socket-inet6-perl libio-socket-ssl-perl \
+  libio-tee-perl libhtml-parser-perl libjson-webtoken-perl \
+  libmail-imapclient-perl libparse-recdescent-perl libmodule-scandeps-perl \
+  libreadonly-perl libregexp-common-perl libsys-meminfo-perl \
+  libterm-readkey-perl libtest-mockobject-perl libtest-pod-perl \
+  libunicode-string-perl liburi-perl libwww-perl make cpanminus
+
+# 2. Download and install imapsync
+wget -N https://raw.githubusercontent.com/imapsync/imapsync/master/imapsync
+chmod +x imapsync
+mv imapsync /usr/local/bin/imapsync
+
+# 3. Verify
+imapsync --version
 ```
 
 ## Setup
