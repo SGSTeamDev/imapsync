@@ -43,7 +43,7 @@ start_job() {
       --addheader \
       --syncinternaldates \
       --useuid \
-      --fast \
+      --fastio1 --fastio2 \
       --nofoldersizes \
       --skipsize \
       --timeout1 60 --timeout2 60 \
