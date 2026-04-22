@@ -3,6 +3,16 @@
 All notable changes to this project will be documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.0] - 2026-04-22
+
+### Fixed
+- SMTP protocol now correctly uses `smtps://` for port 465 and `smtp://` + `--ssl-reqd` for port 587
+- Added proper email headers: `MIME-Version` and `Content-Type` to prevent silent rejection
+- Replaced `--silent` with `--show-error --fail` for visible SMTP error output
+- Fixed line endings to use `\r\n` for SMTP compliance
+- Added `--connect-timeout 10 --max-time 30` to prevent notify.sh from hanging
+- Updated `.env.example` to document port/protocol relationship
+
 ## [1.1.0] - 2026-04-22
 
 ### Fixed
