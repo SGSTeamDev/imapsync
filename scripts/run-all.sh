@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Launch or check all account migrations with concurrency control
 # Usage:
-#   bash scripts/run-all.sh           # start all accounts (max 2 at a time)
+#   bash scripts/run-all.sh [pass]    # start all (pass: 1=30days, 2=365days, 3=all)
 #   bash scripts/run-all.sh status    # check status of all accounts
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -28,6 +28,19 @@ if [[ "${1:-}" == "status" ]]; then
   exit 0
 fi
 
+PASS="${1:-1}"
+
+if [[ ! "$PASS" =~ ^[1-3]$ ]]; then
+  echo "Usage: $0 [pass|status]"
+  echo "  1 = Pass 1: Last 30 days (newest)"
+  echo "  2 = Pass 2: 30 days to 1 year"
+  echo "  3 = Pass 3: Full history (all remaining)"
+  echo "  status = Check all account statuses"
+  exit 1
+fi
+
+echo "Starting all accounts with Pass $PASS..."
+
 for script in "${ACCOUNT_SCRIPTS[@]}"; do
   [[ -f "$script" ]] || { echo "WARN: $script not found, skipping."; continue; }
 
@@ -36,6 +49,6 @@ for script in "${ACCOUNT_SCRIPTS[@]}"; do
     sleep 30
   done
 
-  bash "$script" start
+  bash "$script" "$PASS"
   sleep 10
 done

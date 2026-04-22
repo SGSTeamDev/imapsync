@@ -70,20 +70,52 @@ chmod +x accounts/*.sh scripts/*.sh
 
 ### Single account
 
+The scripts now support a 3-pass approach to sync from newest to oldest:
+
 ```bash
-bash accounts/user1.sh            # start migration
-bash accounts/user1.sh status     # check if running + last 10 log lines
+# Pass 1: Sync last 30 days (newest emails first)
+bash accounts/user1.sh 1
+
+# Pass 2: Sync 30 days to 1 year old
+bash accounts/user1.sh 2
+
+# Pass 3: Sync full history (all remaining emails)
+bash accounts/user1.sh 3
+
+# Check status
+bash accounts/user1.sh status
+
+# Monitor logs
 bash accounts/user1.sh log        # live log tail (Ctrl+C to exit)
 bash accounts/user1.sh attach     # attach to tmux session (Ctrl+B D to detach)
-bash accounts/user1.sh stop       # kill the session
+
+# Stop migration
+bash accounts/user1.sh stop
 ```
+
+**Default behavior:** Running without a pass number defaults to Pass 1 (last 30 days).
 
 ### All accounts at once
 
 ```bash
-bash scripts/run-all.sh           # start all
-bash scripts/run-all.sh status    # check all
+# Start all accounts with Pass 1 (last 30 days)
+bash scripts/run-all.sh 1
+
+# Start all accounts with Pass 2 (30 days to 1 year)
+bash scripts/run-all.sh 2
+
+# Start all accounts with Pass 3 (full history)
+bash scripts/run-all.sh 3
+
+# Check status of all accounts
+bash scripts/run-all.sh status
 ```
+
+### Recommended workflow
+
+1. **Pass 1** — Sync recent emails (last 30 days) to get immediate access
+2. Wait for Pass 1 to complete, then run **Pass 2** — Sync older emails (30 days to 1 year)
+3. Wait for Pass 2 to complete, then run **Pass 3** — Sync full history (everything else)
 
 ### Test email notifications
 

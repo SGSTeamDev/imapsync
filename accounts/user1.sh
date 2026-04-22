@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Account migration: USER1
 # Usage:
-#   bash accounts/user1.sh            # start
+#   bash accounts/user1.sh [pass]     # start (pass: 1=30days, 2=365days, 3=all)
 #   bash accounts/user1.sh status     # running or not + last 10 log lines
 #   bash accounts/user1.sh log        # tail live log (Ctrl+C to exit)
 #   bash accounts/user1.sh attach     # attach to live tmux session (Ctrl+B D to detach)
@@ -26,13 +26,36 @@ NOTIFY="$ROOT/scripts/notify.sh"
 mkdir -p "$HOME/imapsync-logs"
 
 start_job() {
+  local PASS="${1:-1}"
+  local MAXAGE_FLAG=""
+  local PASS_DESC=""
+
+  case "$PASS" in
+    1)
+      MAXAGE_FLAG="--maxage 30"
+      PASS_DESC="Pass 1: Last 30 days (newest)"
+      ;;
+    2)
+      MAXAGE_FLAG="--maxage 365 --minage 30"
+      PASS_DESC="Pass 2: 30 days to 1 year"
+      ;;
+    3)
+      MAXAGE_FLAG=""
+      PASS_DESC="Pass 3: Full history (all remaining)"
+      ;;
+    *)
+      echo "ERROR: Invalid pass number. Use 1, 2, or 3."
+      exit 1
+      ;;
+  esac
+
   if tmux has-session -t "$SESSION" 2>/dev/null; then
     echo "[$SESSION] Already running. Use 'attach' or 'log' to monitor, 'stop' to kill."
     exit 0
   fi
 
-  echo "[$SESSION] Starting..."
-  bash "$NOTIFY" "imapsync STARTED: $ACCOUNT" "Migration for $ACCOUNT has started on $(hostname) at $(date)."
+  echo "[$SESSION] Starting $PASS_DESC..."
+  bash "$NOTIFY" "imapsync STARTED: $ACCOUNT ($PASS_DESC)" "Migration for $ACCOUNT has started on $(hostname) at $(date)."
 
   tmux new-session -d -s "$SESSION" bash -lc "
     imapsync \
@@ -49,6 +72,7 @@ start_job() {
       --timeout1 60 --timeout2 60 \
       --reconnectretry1 5 --reconnectretry2 5 \
       --errorsmax 1000 \
+      $MAXAGE_FLAG \
       2>&1 | tee \"$LOG\"
 
     EXIT_CODE=\${PIPESTATUS[0]}
@@ -65,9 +89,9 @@ start_job() {
   echo "  Attach tmux: bash accounts/user1.sh attach"
 }
 
-case "${1:-start}" in
-  start)
-    start_job
+case "${1:-1}" in
+  1|2|3)
+    start_job "$1"
     ;;
   status)
     if tmux has-session -t "$SESSION" 2>/dev/null; then
@@ -102,7 +126,10 @@ case "${1:-start}" in
     fi
     ;;
   *)
-    echo "Usage: $0 {start|status|log|attach|stop}"
+    echo "Usage: $0 {1|2|3|status|log|attach|stop}"
+    echo "  1 = Pass 1: Last 30 days (newest)"
+    echo "  2 = Pass 2: 30 days to 1 year"
+    echo "  3 = Pass 3: Full history (all remaining)"
     exit 1
     ;;
 esac
