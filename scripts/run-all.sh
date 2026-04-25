@@ -3,6 +3,7 @@
 # Usage:
 #   bash scripts/run-all.sh           # start all accounts (max 2 at a time)
 #   bash scripts/run-all.sh status    # check status of all accounts
+#   bash scripts/run-all.sh stop      # stop all running sessions
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
@@ -24,6 +25,14 @@ if [[ "${1:-}" == "status" ]]; then
   for script in "${ACCOUNT_SCRIPTS[@]}"; do
     [[ -f "$script" ]] && bash "$script" status
     echo ""
+  done
+  exit 0
+fi
+
+if [[ "${1:-}" == "stop" ]]; then
+  echo "=== Stopping all imapsync sessions ==="
+  for script in "${ACCOUNT_SCRIPTS[@]}"; do
+    [[ -f "$script" ]] && bash "$script" stop
   done
   exit 0
 fi
