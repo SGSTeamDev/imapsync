@@ -71,7 +71,6 @@ start_job() {
       --skipsize \
       --timeout1 120 --timeout2 60 \
       --reconnectretry1 10 --reconnectretry2 5 \
-      --retry \
       --errorsmax 1000 \
       $MAXAGE_FLAG \
       2>&1 | tee \"$LOG\"
