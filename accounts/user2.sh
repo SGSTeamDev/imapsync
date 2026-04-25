@@ -43,13 +43,11 @@ start_job() {
       --addheader \
       --syncinternaldates \
       --useuid \
-      --fastio2 \
       --nofoldersizes \
       --skipsize \
-      --timeout1 120 --timeout2 60 \
+      --timeout1 300 --timeout2 60 \
       --reconnectretry1 10 --reconnectretry2 5 \
       --errorsmax 1000 \
-      --maxsize 10000000 \
       2>&1 | tee \"$LOG\"
 
     EXIT_CODE=\${PIPESTATUS[0]}
